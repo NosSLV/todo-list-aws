@@ -1,3 +1,4 @@
+// Pipeline for the complete deployment of the application
 pipeline {
     agent any
     stages {
