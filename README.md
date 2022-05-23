@@ -36,7 +36,7 @@ Ejecutar el siguiente comando:
 sam deploy --guided
 ```
 
-El despliegue de la aplicación empaquetada publicará el artefacto en un bucket S3  y desplegará la aplicación en AWS. Solicitará la siguiente información:
+El despliegue de la aplicación empaquetada publicará el artefacto en un bucket S3 y desplegará la aplicación en AWS. Solicitará la siguiente información:
 
 - **Stack Name**: El nombre del stack que desplegará en CloudFormation. Debe ser único.
 - **AWS Region**: La región en la que se desea publicar la Aplicación.
@@ -54,7 +54,7 @@ Revisar el fichero samconfig.toml
 vim samconfig.toml
 ```
 
-Buscar en la configuración los buckets donde se van a almacenar los artefactos y modificarla para que apunte a tus propios buckets, para ello hay que modificar las "XXXXXX" por el nombre identificativo. 
+Buscar en la configuración los buckets donde se van a almacenar los artefactos y modificarla para que apunte a tus propios buckets, para ello hay que modificar las "XXXXXX" por el nombre identificativo.
 
 > Previamente se deberán crear los buckets a través de la consola de AWS!!!
 
@@ -66,7 +66,7 @@ s3_bucket = "aws-sam-cli-managed-staging-samclisourcebucket-XXXXXX" #Incluir buc
 s3_bucket = "aws-sam-cli-managed-production-samclisourcebucket-XXXXXX" #Incluir bucket propio. Previamente se deberá crear los buckets a través de la consola de AWS!!!
 ```
 
-Ejecuta el siguiente comando para el entorno **default**: 
+Ejecuta el siguiente comando para el entorno **default**:
 
 > Debes usar este entorno para pruebas manuales y dejar el resto para los despliegues con Jenkins.
 
@@ -90,22 +90,71 @@ sam deploy template.yaml --config-env prod
 
 A continuación se describen los comandos/acciones a realizar para poder probar la aplicación en local:
 
+Primero levanta la red y el contenedor en Docker:
+
 ```bash
 ## Crear red de docker
 docker network create sam
-
 ## Levantar el contenedor de dynamodb en la red de SAM con el nombre de dynamodb
 docker run -p 8000:8000 --network sam --name dynamodb -d amazon/dynamodb-local
+```
 
-## Crear la tabla en local, para poder trabajar localmemte
+Crea la tabla local en DynamoDB:
+
+> [Doc. Oficial: File Location](https://docs.aws.amazon.com/sdkref/latest/guide/file-location.html)
+
+```bash
+## Primero hay que realizar la configuración inicial (si lo estás haciendo desde AWS Academy puedes encontrar la información necesaria en el panel "AWS Details"). Para ello ejecuta el comando de configuración por primera vez y sigue los pasos:
+aws configure
+aws configure list # Para comprobar la configuración
+## Si necesitas realizar alguna modificación adicional puedes hacerlo accediendo a ~/.aws/credentials (o /root/.aws/credentials):
+[default]
+aws_access_key_id=XXXXXXXXX
+aws_secret_access_key=XXXXXXXXXXXXXXXXXXX
+aws_session_token=XXXXXXXXXXXXXXXXX
+#~/.aws/config también para añadir la región manualmente:
+[default]
+region = us-east-1
+
+## Crear la tabla en local, para poder trabajar localmemte:
 aws dynamodb create-table --table-name local-TodosDynamoDbTable --attribute-definitions AttributeName=id,AttributeType=S --key-schema AttributeName=id,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 --endpoint-url http://localhost:8000
 
-## Empaquetar SAM
-sam build # también se puede usar sam build --use-container si se dan problemas con las librerías de python
+## Puedes comprobar la tabla con:
+aws dynamodb list-tables --endpoint-url http://localhost:8000
+```
 
-## Levantar la API en local, en el puerto 8080, dentro de la red de docker SAM
+Empaquetado de SAM:
+
+```shell
+sam build # Compila la aplicación
+sam build --use-container # Usar en caso de no tener la versión de python necesaria instalada en local, de esta manera realizará la compilación desde un contenedor con la versión y las librerías de Python necesarias.
+```
+
+Levantar la API en local:
+
+```shell
+## Levantar la API en local, en el puerto 8081, dentro de la red de docker SAM
 sam local start-api --port 8081 --env-vars localEnvironment.json --docker-network sam
 ```
+
+Comprobar funcionalidad de la aplicación en local:
+
+> Recomiendo que si estás realizandolo desde un host windows uses WSL (versión 1) para realizar las llamadas a localhost desde un entorno linux, ya que Windows pone dificil el ejecutar con exito comandos cURL que tengan los datos en el mismo comando en vez de en un archivo JSON a parte.
+
+```shell
+# Create
+curl -X POST http://127.0.0.1:8081/todos --data '{ "text": "Learn Serverless" }'
+# List
+curl http://127.0.0.1:8081/todos
+# Get
+curl http://127.0.0.1:8081/todos/<id>
+# Update
+curl -X PUT http://127.0.0.1:8081/todos/<id> --data '{ "text": "Learn Serverless", "checked": true }'
+# Delete
+curl -X DELETE http://127.0.0.1:8081/todos/<id>
+```
+
+
 
 ## Consultar logs de las funciones lambda
 
