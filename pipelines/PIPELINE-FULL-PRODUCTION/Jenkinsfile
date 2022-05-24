@@ -1,3 +1,4 @@
+// Pipeline for production stage deployment
 pipeline {
     agent any
     stages {
