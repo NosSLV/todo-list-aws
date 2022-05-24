@@ -1,3 +1,5 @@
+Command test logs after local deployment:
+
 ## Create
 
 ```shell
@@ -32,7 +34,7 @@ curl -X PUT http://127.0.0.1:8081/todos/fb5fcfb6-dab9-11ec-8b2e-0242ac110002 --d
 ```
 
 ## Delete
-```powershell
+```shell
 curl -X DELETE http://127.0.0.1:8081/todos/fb5fcfb6-dab9-11ec-8b2e-0242ac110002
 
 ## Log
