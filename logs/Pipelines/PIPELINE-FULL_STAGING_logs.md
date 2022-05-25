@@ -1,3 +1,4 @@
+```
 Started by user nos
 Obtained pipelines/PIPELINE-FULL-STAGING/Jenkinsfile from git https://github.com/NosSLV/todo-list-aws.git
 [Pipeline] Start of Pipeline
@@ -864,3 +865,4 @@ Clean env: delete dir
 [Pipeline] // node
 [Pipeline] End of Pipeline
 Finished: SUCCESS
+```
