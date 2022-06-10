@@ -112,7 +112,7 @@ aws configure list # Para comprobar la configuración
 aws_access_key_id=XXXXXXXXX
 aws_secret_access_key=XXXXXXXXXXXXXXXXXXX
 aws_session_token=XXXXXXXXXXXXXXXXX
-#~/.aws/config también para añadir la región manualmente:
+# ~/.aws/config también para añadir la región manualmente:
 [default]
 region = us-east-1
 
@@ -125,14 +125,14 @@ aws dynamodb list-tables --endpoint-url http://localhost:8000
 
 Empaquetado de SAM:
 
-```shell
+```bash
 sam build # Compila la aplicación
 sam build --use-container # Usar en caso de no tener la versión de python necesaria instalada en local, de esta manera realizará la compilación desde un contenedor con la versión y las librerías de Python necesarias.
 ```
 
 Levantar la API en local:
 
-```shell
+```bash
 ## Levantar la API en local, en el puerto 8081, dentro de la red de docker SAM
 sam local start-api --port 8081 --env-vars localEnvironment.json --docker-network sam
 ```
@@ -141,7 +141,7 @@ Comprobar funcionalidad de la aplicación en local:
 
 > Recomiendo que si estás realizandolo desde un host windows uses WSL (versión 1) para realizar las llamadas a localhost desde un entorno linux, ya que Windows pone dificil el ejecutar con exito comandos cURL que tengan los datos en el mismo comando en vez de en un archivo JSON a parte.
 
-```shell
+```bash
 # Create
 curl -X POST http://127.0.0.1:8081/todos --data '{ "text": "Learn Serverless" }'
 # List
@@ -153,8 +153,6 @@ curl -X PUT http://127.0.0.1:8081/todos/<id> --data '{ "text": "Learn Serverless
 # Delete
 curl -X DELETE http://127.0.0.1:8081/todos/<id>
 ```
-
-
 
 ## Consultar logs de las funciones lambda
 
