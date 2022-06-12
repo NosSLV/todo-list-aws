@@ -10,3 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial version of the code
+
+## [1.0.1] - 12-06-2022
+
+- Coverage to 91%

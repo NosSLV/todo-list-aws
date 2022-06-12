@@ -12,5 +12,5 @@ python test/unit/TestToDo.py
 # run test under coverage 
 pip show coverage
 coverage run --include=src/todoList.py test/unit/TestToDo.py
-coverage report
+coverage report -m
 coverage xml
